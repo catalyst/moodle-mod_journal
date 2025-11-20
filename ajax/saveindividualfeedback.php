@@ -28,8 +28,9 @@ $sesskey = required_param('sesskey', PARAM_ALPHANUM);
 $cmid = required_param('cmid', PARAM_INT);
 $userid = required_param('userid', PARAM_INT);
 $entryid = required_param('entryid', PARAM_INT);
-$feedback = optional_param('feedback', null, PARAM_NOTAGS);
+$feedback = optional_param('feedback', null, PARAM_RAW);
 $grade = optional_param('grade', '', PARAM_RAW);
+$itemid = required_param('itemid', PARAM_INT);
 
 if ($grade === '') {
     $grade = -1;
@@ -41,11 +42,11 @@ if (! $cm = get_coursemodule_from_id('journal', $cmid)) {
     throw new \moodle_exception(get_string('incorrectcmid', 'journal'));
 }
 
-if (! $course = $DB->get_record('course', array('id' => $cm->course))) {
+if (! $course = $DB->get_record('course', ['id' => $cm->course])) {
     throw new \moodle_exception(get_string('incorrectcourseid', 'journal'));
 }
 
-if (! $user = $DB->get_record('user', array('id' => $userid))) {
+if (! $user = $DB->get_record('user', ['id' => $userid])) {
     throw new \moodle_exception(get_string('incorrectuserid', 'journal'));
 }
 
@@ -54,12 +55,12 @@ require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/journal:manageentries', $context);
 
-if (! $journal = $DB->get_record('journal', array('id' => $cm->instance))) {
+if (! $journal = $DB->get_record('journal', ['id' => $cm->instance])) {
     throw new \moodle_exception(get_string('incorrectjournalid', 'journal'));
 }
 $journal->cmidnumber = $cm->idnumber;
 
-if (! $entry = $DB->get_record('journal_entries', array('journal' => $journal->id, 'id' => $entryid))) {
+if (! $entry = $DB->get_record('journal_entries', ['journal' => $journal->id, 'id' => $entryid])) {
     throw new \moodle_exception(get_string('incorrectjournalentry', 'journal'));
 }
 
@@ -70,6 +71,10 @@ $ratingchanged = false;
 if ($grade !== null && $grade !== (int)$entry->rating) {
     $ratingchanged = true;
 }
+
+$feedback = clean_text($feedback, FORMAT_HTML);
+
+$feedback = file_save_draft_area_files($itemid, $context->id, 'mod_journal', 'feedback', $entryid, [], $feedback);
 
 if ($ratingchanged || $feedback !== $entry->entrycomment) {
     try {
@@ -87,10 +92,10 @@ if ($ratingchanged || $feedback !== $entry->entrycomment) {
         journal_update_grades($journal, $entry->userid);
 
         // Trigger module entry updated event.
-        $event = \mod_journal\event\entry_updated::create(array(
+        $event = \mod_journal\event\entry_updated::create([
             'objectid' => $journal->id,
-            'context' => $context
-        ));
+            'context' => $context,
+        ]);
 
         $event->add_record_snapshot('course_modules', $cm);
         $event->add_record_snapshot('course', $course);
