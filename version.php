@@ -14,9 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-// Only when master becomes a stable the version value will be changed for
-// the current date. Otherwise we just increase the last NN by one.
-
 /**
  * mod_journal version file
  *
@@ -28,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'mod_journal';
-$plugin->version  = 2024120300;
-$plugin->requires = 2020061500;  /* Moodle 3.9 */
-$plugin->release = '4.5.0 (Build: 2024120300)';
+$plugin->version = 2026030700;
+$plugin->requires = 2022041900;  /* Moodle 4.0 */
+$plugin->release = '5.1.3 (Build: 2026030700)';
 $plugin->maturity = MATURITY_STABLE;
