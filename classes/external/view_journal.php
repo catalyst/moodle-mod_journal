@@ -73,7 +73,7 @@ class view_journal extends journal_external_api_base {
 
         $context = context_module::instance($cm->id);
         self::validate_context($context);
-        require_capability('mod/journal:view', $context);
+        require_capability('mod/journal:addentries', $context);
 
         // Trigger event.
         $event = \mod_journal\event\course_module_viewed::create([

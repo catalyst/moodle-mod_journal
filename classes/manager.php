@@ -123,9 +123,11 @@ class manager {
      * @return bool true if the user has answered, false otherwise
      */
     public function has_answered(): bool {
-        global $USER;
-        $answer = \journal_get_completion_state($this->course, $this->cm, $USER->id, true);
-        return $answer;
+        global $DB, $USER;
+        return $DB->record_exists('journal_entries', [
+            'journal' => $this->instance->id,
+            'userid' => $USER->id,
+        ]);
     }
 
     /**

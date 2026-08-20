@@ -24,6 +24,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$result = [
+    'status' => '',
+    'content' => '',
+];
+
 $sesskey = required_param('sesskey', PARAM_ALPHANUM);
 $cmid = required_param('cmid', PARAM_INT);
 $userid = required_param('userid', PARAM_INT);
@@ -68,7 +73,7 @@ confirm_sesskey($sesskey);
 
 // Only update entries where feedback has actually changed.
 $ratingchanged = false;
-if ($grade !== null && $grade !== (int) $entry->rating) {
+if ($grade !== (int) $entry->rating) {
     $ratingchanged = true;
 }
 
