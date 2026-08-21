@@ -50,10 +50,23 @@ use moodle_page;
  */
 final class mobile_textarea_contrast_test extends advanced_testcase {
     /**
-     * Reset $PAGE between tests so the theme initialised by the previous
-     * test's mobile_*() WS handler (which calls require_login internally)
-     * does not bleed into the next one. Without this, the second test
-     * fails with "The theme has already been set up for this page".
+     * Reset $PAGE and start a message sink before each test.
+     *
+     * The mobile_*() WS handlers we exercise here call require_login(),
+     * which initialises the theme via $PAGE->initialise_theme_and_output().
+     * Without a fresh $PAGE the theme leaks from one test into the next
+     * and the second one fails with "The theme has already been set up
+     * for this page".
+     *
+     * The message sink is started because enrolment in a course fires the
+     * Moodle hooks system, which sends a welcome email through the email
+     * message processor. On Moodle 4.4+ that processor renders the email
+     * body via the Mustache renderer ($PAGE->get_renderer()), which also
+     * initialises the theme. With the sink active, message_send() returns
+     * the saved message id without ever calling the email processor, so
+     * no renderer call and no theme initialisation happens. The sink is
+     * automatically torn down by phpunit_util::reset_all_data() between
+     * tests, so we do not need a matching tearDown().
      *
      * @return void
      */
@@ -61,6 +74,7 @@ final class mobile_textarea_contrast_test extends advanced_testcase {
         global $PAGE;
         parent::setUp();
         $PAGE = new moodle_page();
+        $this->redirectMessages();
     }
 
     /**
