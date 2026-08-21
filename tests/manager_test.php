@@ -32,6 +32,8 @@ use dml_exception;
  * the course-format overview in error.
  *
  * @package   mod_journal
+ * @copyright 2025 Luca Bösch <luca.boesch@bfh.ch>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \mod_journal\manager
  */
 final class manager_test extends advanced_testcase {

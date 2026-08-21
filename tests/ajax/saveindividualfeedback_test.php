@@ -27,8 +27,8 @@ use advanced_testcase;
  *     scope. If the leaf is ever called from a different scope (test
  *     harness, CLI, alternative dispatcher) PHP raises an "undefined
  *     variable" notice and the JSON response is malformed.
- *   - The leaf also carried a dead `$grade !== null` clause: $grade
- *     is forced to an int by lines just above, so the null check could
+ *   - The leaf also carried a dead null clause on $grade: $grade is
+ *     forced to an int by lines just above, so the null check could
  *     never fire.
  *
  * Full behavioural tests for the leaf would require exercising the
@@ -38,15 +38,20 @@ use advanced_testcase;
  * dead null clause, someone types $grade as nullable again).
  *
  * @package   mod_journal
+ * @copyright 2025 Luca Bösch <luca.boesch@bfh.ch>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class saveindividualfeedback_test extends advanced_testcase {
     /**
      * Path to the leaf.
      */
-    private const LEAF = __DIR__ . '/../ajax/saveindividualfeedback.php';
+    private const LEAF = __DIR__ . '/../../ajax/saveindividualfeedback.php';
 
     /**
      * The leaf declares a local $result array near the top of the file.
+     *
+     * @return void
+     * @coversNothing
      */
     public function test_leaf_declares_local_result(): void {
         $source = file_get_contents(self::LEAF);
@@ -63,9 +68,12 @@ final class saveindividualfeedback_test extends advanced_testcase {
     }
 
     /**
-     * The dead `$grade !== null` clause is gone. $grade is forced to
-     * an int above the rating-changed check, so a `!== null` test
-     * would always pass and only obscures the intent.
+     * The dead grade null clause is gone. $grade is forced to an int
+     * above the rating-changed check, so a null test would always pass
+     * and only obscures the intent.
+     *
+     * @return void
+     * @coversNothing
      */
     public function test_dead_grade_null_check_is_removed(): void {
         $source = file_get_contents(self::LEAF);
@@ -74,7 +82,7 @@ final class saveindividualfeedback_test extends advanced_testcase {
         $this->assertDoesNotMatchRegularExpression(
             '/\$grade\s*!==\s*null/',
             $source,
-            'Dead `$grade !== null` clause must stay removed - $grade is always an int at this point'
+            'Dead grade-null clause must stay removed - $grade is always an int at this point'
         );
     }
 }

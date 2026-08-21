@@ -35,15 +35,20 @@ use advanced_testcase;
  * being whitelisted) without that overhead.
  *
  * @package   mod_journal
+ * @copyright 2025 Luca Bösch <luca.boesch@bfh.ch>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class ajax_dispatcher_test extends advanced_testcase {
     /**
      * Path to the dispatcher.
      */
-    private const DISPATCHER = __DIR__ . '/../ajax/ajax.php';
+    private const DISPATCHER = __DIR__ . '/../../ajax/ajax.php';
 
     /**
      * The dispatcher declares an $allowedactions array.
+     *
+     * @return void
+     * @coversNothing
      */
     public function test_dispatcher_declares_allow_list(): void {
         $source = file_get_contents(self::DISPATCHER);
@@ -59,6 +64,9 @@ final class ajax_dispatcher_test extends advanced_testcase {
     /**
      * The dispatcher rejects actions not in the allow-list before
      * touching the filesystem.
+     *
+     * @return void
+     * @coversNothing
      */
     public function test_dispatcher_rejects_unknown_actions_before_file_exists(): void {
         $source = file_get_contents(self::DISPATCHER);
@@ -80,9 +88,12 @@ final class ajax_dispatcher_test extends advanced_testcase {
 
     /**
      * Every action leaf that ships in ajax/ is whitelisted.
+     *
+     * @return void
+     * @coversNothing
      */
     public function test_every_action_leaf_is_whitelisted(): void {
-        $ajaxdir = __DIR__ . '/../ajax';
+        $ajaxdir = __DIR__ . '/../../ajax';
         $leaves = glob($ajaxdir . '/*.php') ?: [];
         // Strip the dispatcher itself.
         $leaves = array_filter($leaves, fn($f) => basename($f) !== 'ajax.php');

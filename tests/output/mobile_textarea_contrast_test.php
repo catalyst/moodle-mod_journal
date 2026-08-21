@@ -46,7 +46,6 @@ use dml_exception;
  * @coversDefaultClass \mod_journal\output\mobile
  */
 final class mobile_textarea_contrast_test extends advanced_testcase {
-
     /**
      * Extract the inline style attribute of the textarea whose `name`
      * attribute equals $name in the rendered HTML.
@@ -89,7 +88,7 @@ final class mobile_textarea_contrast_test extends advanced_testcase {
         $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
         $journal = $this->getDataGenerator()->create_module('journal', ['course' => $course]);
 
-        // setUser() initialises an empty session and loads the user
+        // SetUser() initialises an empty session and loads the user
         // record, which makes isloggedin() return true so that
         // require_login() inside the mobile WS handler does not redirect
         // to the login page. require_login() itself sets up the theme
@@ -195,6 +194,7 @@ final class mobile_textarea_contrast_test extends advanced_testcase {
      * @return void
      * @throws coding_exception
      * @throws dml_exception
+     * @covers ::mobile_entry_edit
      */
     public function test_student_entry_textarea_keeps_name_attribute(): void {
         $this->resetAfterTest();

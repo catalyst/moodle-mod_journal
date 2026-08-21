@@ -30,6 +30,8 @@ use moodle_exception;
  * Mobile App integration.
  *
  * @package   mod_journal
+ * @copyright 2025 Luca Bösch <luca.boesch@bfh.ch>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \mod_journal\external\view_journal
  */
 final class view_journal_test extends advanced_testcase {
@@ -103,7 +105,15 @@ final class view_journal_test extends advanced_testcase {
         $stranger = $this->getDataGenerator()->create_user();
         $this->setUser($stranger);
 
-        $this->expectException(\core\exception\require_login_exception::class);
+        // Moodle 4.5+ aliases require_login_exception into \core\exception;
+        // older Moodles (down to the declared 4.0 minimum) only have the
+        // global class. Reference both via FQCN string so the test passes
+        // on every supported branch.
+        $this->expectException(
+            class_exists('\\core\\exception\\require_login_exception')
+                ? \core\exception\require_login_exception::class
+                : \require_login_exception::class
+        );
         view_journal::execute($journal->cmid);
     }
 }

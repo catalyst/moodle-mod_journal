@@ -34,6 +34,8 @@ use required_capability_exception;
  * @runTestsInSeparateProcesses
  *
  * @package   mod_journal
+ * @copyright 2025 Luca Bösch <luca.boesch@bfh.ch>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \mod_journal\external\get_entry
  */
 final class get_entry_rating_test extends advanced_testcase {
