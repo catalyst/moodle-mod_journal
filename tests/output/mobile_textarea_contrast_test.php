@@ -19,6 +19,7 @@ namespace mod_journal\output;
 use advanced_testcase;
 use coding_exception;
 use dml_exception;
+use moodle_page;
 
 /**
  * Regression tests for issue #161: dark-mode contrast on mobile-app textareas.
@@ -43,9 +44,25 @@ use dml_exception;
  * background and colour.
  *
  * @package   mod_journal
+ * @copyright 2025 Luca Bösch <luca.boesch@bfh.ch>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \mod_journal\output\mobile
  */
 final class mobile_textarea_contrast_test extends advanced_testcase {
+    /**
+     * Reset $PAGE between tests so the theme initialised by the previous
+     * test's mobile_*() WS handler (which calls require_login internally)
+     * does not bleed into the next one. Without this, the second test
+     * fails with "The theme has already been set up for this page".
+     *
+     * @return void
+     */
+    protected function setUp(): void {
+        global $PAGE;
+        parent::setUp();
+        $PAGE = new moodle_page();
+    }
+
     /**
      * Extract the inline style attribute of the textarea whose `name`
      * attribute equals $name in the rendered HTML.
@@ -135,12 +152,6 @@ final class mobile_textarea_contrast_test extends advanced_testcase {
      * @covers ::mobile_course_view
      */
     public function test_teacher_feedback_textarea_has_dark_mode_contrast(): void {
-        // Disable welcome emails - they trigger a renderer call that
-        // initialises the theme, and the second enrolment in this test
-        // would then fail with "theme has already been set up" when
-        // require_login() runs.
-        set_config('noemailever', 1);
-
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
