@@ -138,14 +138,14 @@ class set_text extends journal_external_api_base {
         $newentry->userid = $USER->id;
         $newentry->journal = $journal->id;
 
-        if ($entry) {
-            $newentry->id = $entry->id;
-        } else {
+        $isnew = empty($entry);
+        if ($isnew) {
             // Create a record first to get an ID for file storage.
             $tempentry = clone $newentry;
             $tempentry->text = '';
             $newentry->id = $DB->insert_record('journal_entries', $tempentry);
-            $entry = $newentry;
+        } else {
+            $newentry->id = $entry->id;
         }
 
         // Handle File Drafts.
@@ -165,7 +165,7 @@ class set_text extends journal_external_api_base {
         $DB->update_record('journal_entries', $newentry);
 
         // Trigger events.
-        if ($entry && isset($entry->modified) && $entry->modified > 0) {
+        if (!$isnew) {
             $event = entry_updated::create([
                 'objectid' => $journal->id,
                 'context' => $context,

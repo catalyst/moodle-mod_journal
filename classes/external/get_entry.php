@@ -108,7 +108,7 @@ class get_entry extends journal_external_api_base {
             return [
                 'text' => (string) $entry->text,
                 'modified' => $entry->modified,
-                'rating' => (float) $entry->rating,
+                'rating' => $entry->rating === null ? -1.0 : (float) $entry->rating,
                 'comment' => (string) $entry->entrycomment,
                 'teacher' => $entry->teacher,
             ];
